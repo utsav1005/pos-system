@@ -2,6 +2,7 @@ package com.enterprise.pos.service.serviceImpl;
 
 import com.enterprise.pos.model.User;
 import com.enterprise.pos.repository.UserRepository;
+import com.enterprise.pos.security.jwt.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,12 +25,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(username).orElseThrow(() ->
                 new UsernameNotFoundException("User not found " + username));
 
-        GrantedAuthority grantedAuthority =
-                new SimpleGrantedAuthority(user.getRole().toString());
-        Collection<GrantedAuthority> authorities = Collections.singletonList(grantedAuthority);
+        return  UserPrincipal.fromUser(user);
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail() , user.getPassword() , authorities
-          );
     }
 }

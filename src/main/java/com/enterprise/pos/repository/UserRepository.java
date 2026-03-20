@@ -1,6 +1,7 @@
 package com.enterprise.pos.repository;
 
 import com.enterprise.pos.model.User;
+import com.enterprise.pos.security.jwt.UserPrincipal;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

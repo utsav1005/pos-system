@@ -1,24 +1,22 @@
 package com.enterprise.pos.model;
 
 import com.enterprise.pos.model.enums.UserRole;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Builder
+public class User{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,7 +35,8 @@ public class User {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<UserRole> role;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
