@@ -4,6 +4,7 @@ import com.enterprise.pos.model.User;
 import com.enterprise.pos.repository.UserRepository;
 import com.enterprise.pos.security.jwt.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -24,7 +26,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username).orElseThrow(() ->
                 new UsernameNotFoundException("User not found " + username));
-
+        log.info("DB Roles  :"+user.getRoles());
         return  UserPrincipal.fromUser(user);
 
     }

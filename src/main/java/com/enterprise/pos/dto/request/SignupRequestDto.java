@@ -30,6 +30,7 @@ public class SignupRequestDto {
 
     private UserRole role;
 
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

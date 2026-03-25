@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -34,9 +35,13 @@ public class User{
     @Column(nullable = false ,  unique = true)
     private String phone;
 
-    @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<UserRole> role;
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Enumerated(EnumType.STRING)
+    private Set<UserRole> roles = new HashSet<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;

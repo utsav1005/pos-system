@@ -4,17 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Getter
 @Service
@@ -28,6 +24,7 @@ public class JwtProvider {
 
     public String generateAccessToken(UserPrincipal userPrincipal) {
         return Jwts.builder()
+                .subject(String.valueOf(userPrincipal.getId()))
                 .signWith(getSecretKey())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis()+1000*60*10))  //10min

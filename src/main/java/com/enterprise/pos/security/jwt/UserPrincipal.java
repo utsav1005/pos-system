@@ -31,10 +31,11 @@ public class UserPrincipal implements UserDetails {
     private String password;
 
 
-    private Collection<? extends GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority>authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         return authorities;
     }
 
@@ -53,8 +54,8 @@ public class UserPrincipal implements UserDetails {
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getRole().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toSet())
+                user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority( role.name())).collect(Collectors.toSet())
         );
     }
 }
