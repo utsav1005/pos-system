@@ -22,6 +22,10 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
+    public SecretKey getSecretKey() {
+        return secretKey;
+    }
+
     public String generateAccessToken(UserPrincipal userPrincipal) {
         return Jwts.builder()
                 .subject(String.valueOf(userPrincipal.getId()))

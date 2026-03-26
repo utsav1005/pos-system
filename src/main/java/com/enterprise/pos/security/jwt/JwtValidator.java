@@ -30,14 +30,18 @@ import java.util.stream.Collectors;
 import static com.enterprise.pos.security.jwt.JwtConstant.JWT_HEADER_PREFIX;
 
 @Component
+
 public class JwtValidator extends OncePerRequestFilter {
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
-    private HandlerExceptionResolver handlerExceptionResolver;
+    private  HandlerExceptionResolver handlerExceptionResolver;
 
-    @Autowired
-    private  JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
+
+    public JwtValidator(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

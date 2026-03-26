@@ -38,7 +38,7 @@ public class SecurityConfig {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtValidator jwtValidator) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement ->
@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .permitAll()
                         //this filter Authenticated User using jwt Token
-                ).addFilterBefore(new JwtValidator(), UsernamePasswordAuthenticationFilter.class)
+                ).addFilterBefore(jwtValidator, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandler ->
                         exceptionHandler.accessDeniedHandler(accessDeniedHandler()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
