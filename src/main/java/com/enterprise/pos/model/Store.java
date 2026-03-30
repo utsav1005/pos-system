@@ -1,16 +1,19 @@
 package com.enterprise.pos.model;
 
+import com.enterprise.pos.model.enums.StoreStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Store {
 
     @Id
@@ -20,7 +23,36 @@ public class Store {
     @Column(nullable = false)
     private String brand;
 
+    @ManyToOne
+    @JoinColumn(name = "store_admin_id")
+    private User storeAdmin;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    private String description;
+
+    private String storeType;
+
+    @Enumerated(EnumType.STRING)
+    private StoreStatus status;
+
+    @Embedded
+    private StoreContact contact;
+
+    @PrePersist
+    protected void onCreate(){
+        createdAt = LocalDateTime.now();
+        status = StoreStatus.PENDING;
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        updatedAt = LocalDateTime.now();
+    }
 
 
 

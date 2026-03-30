@@ -1,36 +1,28 @@
 package com.enterprise.pos.dto;
 
-import com.enterprise.pos.model.Store;
+import com.enterprise.pos.model.StoreContact;
+import com.enterprise.pos.model.enums.StoreStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserDto {
+public class StoreDto {
 
     private Long id;
-
-    private String fullName;
-
-    private String email;
-
-    private String phone;
-
-    private String password;
-
-    private Store store;
-
-    private Set<String> roles;
-
+    private String brand;
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
+    private String description;
+    private String storeType;
+    private StoreStatus status;
+    private StoreContact contact;
+    private UserDto storeAdmin;
 
-    private LocalDateTime lastLogin;
 }

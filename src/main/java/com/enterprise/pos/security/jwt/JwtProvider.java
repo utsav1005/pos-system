@@ -28,11 +28,12 @@ public class JwtProvider {
 
     public String generateAccessToken(UserPrincipal userPrincipal) {
         return Jwts.builder()
-                .subject(String.valueOf(userPrincipal.getId()))
+                .subject(userPrincipal.getUsername())
                 .signWith(getSecretKey())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis()+1000*60*10))  //10min
-                .claim("email" , userPrincipal.getEmail())
+                .claim("userId" , userPrincipal.getId())
+                .claim("email",userPrincipal.getEmail())
                 .claim("authorities" ,userPrincipal.getAuthorities()
                         .stream()
                         .map(GrantedAuthority::getAuthority)

@@ -16,6 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -38,6 +40,9 @@ public class JwtValidator extends OncePerRequestFilter {
     private  HandlerExceptionResolver handlerExceptionResolver;
 
     private final JwtProvider jwtProvider;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     public JwtValidator(JwtProvider jwtProvider) {
         this.jwtProvider = jwtProvider;
@@ -63,8 +68,9 @@ public class JwtValidator extends OncePerRequestFilter {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
                 //Create Authentication inside Spring security
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        email,null,authorities);
+                        userDetails,null,authorities);
                 //Data inside it:
                 //
                 //🌐 Remote IP address
