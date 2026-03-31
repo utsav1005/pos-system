@@ -22,8 +22,6 @@ public class UserDto {
 
     private String phone;
 
-    private String password;
-
     private Store store;
 
     private Set<String> roles;
