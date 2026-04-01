@@ -36,7 +36,9 @@ public class Product {
 
     private String brand;
     private String image;
-//    private Catagory catogory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;

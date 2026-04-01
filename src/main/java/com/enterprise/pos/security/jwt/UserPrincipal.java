@@ -30,7 +30,6 @@ public class UserPrincipal implements UserDetails {
 
     private String password;
 
-
     private Collection<? extends GrantedAuthority>authorities;
 
     @Override

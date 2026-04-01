@@ -15,6 +15,7 @@ import com.enterprise.pos.security.jwt.UserPrincipal;
 import com.enterprise.pos.service.StoreService;
 import com.enterprise.pos.service.UserService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -36,17 +37,18 @@ public class StoreServiceImpl implements StoreService {
     private final ModelMapper modelmapper;
 
     @Override
+    @Transactional
     public StoreDto createStore(StoreDto storeDto , UserDto user) {
         User storeAdmin = userRepository.findById(user.getId()).
                 orElseThrow(() -> new UserException("User not found"));
+
         Store store = Store.builder()
-                .id(storeDto.getId())
                 .brand(storeDto.getBrand())
                 .description(storeDto.getDescription())
                 .contact(storeDto.getContact())
-                .storeAdmin(storeAdmin)
                 .createdAt(storeDto.getCreatedAt())
                 .updatedAt(storeDto.getUpdatedAt())
+                .storeAdmin(storeAdmin)
                 .storeType(storeDto.getStoreType())
                 .status(StoreStatus.PENDING)
                 .build();

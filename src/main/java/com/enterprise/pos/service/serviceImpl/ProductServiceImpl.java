@@ -3,9 +3,11 @@ package com.enterprise.pos.service.serviceImpl;
 import com.enterprise.pos.dto.ProductDto;
 import com.enterprise.pos.dto.UserDto;
 import com.enterprise.pos.exceptions.ResourceNotFoundException;
+import com.enterprise.pos.model.Category;
 import com.enterprise.pos.model.Product;
 import com.enterprise.pos.model.Store;
 import com.enterprise.pos.model.User;
+import com.enterprise.pos.repository.CategoryRepository;
 import com.enterprise.pos.repository.ProductRepository;
 import com.enterprise.pos.repository.StoreRepository;
 import com.enterprise.pos.repository.UserRepository;
@@ -25,15 +27,22 @@ public class ProductServiceImpl implements ProductService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public ProductDto createProduct(ProductDto productDto, UserDto user) {
         Store store = storeRepository.findById(productDto.getStore().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
+
+        Category category = categoryRepository.findById(productDto.getCategory().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+
         Product product = Product.builder()
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .brand(productDto.getBrand())
+                .category(category)
                 .createdAt(productDto.getCreatedAt())
                 .updatedAt(productDto.getUpdatedAt())
                 .MRP(productDto.getMRP())
@@ -53,9 +62,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto updateProduct(Long id, ProductDto productDto, UserDto user){
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product is not found"));
+        Category category = categoryRepository.findById(productDto.getCategory().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setBrand(productDto.getBrand());
+        product.setCategory(category);
         product.setCreatedAt(productDto.getCreatedAt());
         product.setUpdatedAt(LocalDateTime.now());
         product.setMRP(productDto.getMRP());

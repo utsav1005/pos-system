@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/api/super-admin/**").hasRole("ADMIN")
+//                                .requestMatchers("/api/categories/**").hasRole("ADMIN")
                                 .requestMatchers("/api/**").authenticated() //wrong JWT ACCESS DENIED
                                 .anyRequest()
                                 .permitAll()

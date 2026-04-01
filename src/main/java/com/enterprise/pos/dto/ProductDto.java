@@ -1,5 +1,6 @@
 package com.enterprise.pos.dto;
 
+import com.enterprise.pos.model.Category;
 import com.enterprise.pos.model.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
@@ -25,7 +26,7 @@ public class ProductDto {
     private String brand;
     private String image;
     private Long catalogId;
-//    private Catagory catogory;
+    private CategoryDto category;
     private Store store;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
