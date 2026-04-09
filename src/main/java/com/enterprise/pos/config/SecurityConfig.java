@@ -1,20 +1,28 @@
 package com.enterprise.pos.config;
 
-import com.enterprise.pos.security.jwt.JwtValidtor;
-import jakarta.servlet.http.HttpServletRequest;
+import com.enterprise.pos.security.jwt.JwtValidator;
+import com.enterprise.pos.service.serviceImpl.CustomUserServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,19 +30,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomUserServiceImpl customUserService;
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtValidator jwtValidator) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/api/super-admin/**").hasRole("ADMIN")
+                        authorizeRequests.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/api/super-admin/**").hasRole("ADMIN")
+//                                .requestMatchers("/api/categories/**").hasRole("ADMIN")
                                 .requestMatchers("/api/**").authenticated() //wrong JWT ACCESS DENIED
                                 .anyRequest()
                                 .permitAll()
                         //this filter Authenticated User using jwt Token
-                ).addFilterBefore(new JwtValidtor(), UsernamePasswordAuthenticationFilter.class)
+                ).addFilterBefore(jwtValidator, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandler ->
+                        exceptionHandler.accessDeniedHandler(accessDeniedHandler()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return httpSecurity.build();
     }
@@ -57,7 +75,28 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration){
+        return authenticationConfiguration.getAuthenticationManager();
+
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(){
+        return(request, response, accessDeniedException) ->{
+                handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
+        };
     }
 }

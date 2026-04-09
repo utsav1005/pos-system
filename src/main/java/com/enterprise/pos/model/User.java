@@ -1,24 +1,24 @@
 package com.enterprise.pos.model;
 
 import com.enterprise.pos.model.enums.UserRole;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Builder
+public class User{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,8 +36,16 @@ public class User {
     @Column(nullable = false ,  unique = true)
     private String phone;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private Set<UserRole> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "storeAdmin")
+    private List<Store> store;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
