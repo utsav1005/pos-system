@@ -1,12 +1,13 @@
 package com.enterprise.pos.dto;
 
 import com.enterprise.pos.model.Store;
-import com.enterprise.pos.model.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -25,6 +26,7 @@ public class UserDto {
 
     private String phone;
 
+    @JsonIgnore
     private Store store;
 
     private Set<String> roles;
